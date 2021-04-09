@@ -6,7 +6,7 @@
     <string name="answer_button_text">Ver respuesta</string>
     <string name="easy_button_title">Fácil</string>
     <string name="doubt_button_title">Dudo</string>
-    <string name="difficult_button_title">Dificil</string>
+    <string name="difficult_button_title">Difícil</string>
     <string name="cards_left_format">quedan %d tarjetas</string>
     <string name="subtitle_text">Toca para estudiar</string>
     <string name="no_cards">No queda tarjeta</string>
@@ -22,5 +22,7 @@
     <string name="decks_nav_menu_title">Mazos</string>
     <string name="study_nav_menu_title">Estudiar</string>
     <string name="statistics_nav_menu_title">Estadisticas</string>
+    <string name="about_nav_menu_title">Acerca de nosotros</string>
+
 
 </resources>

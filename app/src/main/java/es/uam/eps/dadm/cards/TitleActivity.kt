@@ -28,8 +28,8 @@ class TitleActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_title)
 
         NavigationUI.setupWithNavController(
-            binding.navView,
-            findNavController(R.id.navHostFragment))
+                binding.navView,
+                findNavController(R.id.navHostFragment))
     }
 
     override fun onStart() {

@@ -15,4 +15,9 @@
         android:enabled="true"
         android:icon="@drawable/ic_baseline_assessment_24"
         android:title="@string/statistics_nav_menu_title"/>
+    <item
+        android:id="@+id/aboutFragment"
+        android:enabled="true"
+        android:title="@string/about_nav_menu_title"
+        />
 </menu>

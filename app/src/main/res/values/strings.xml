@@ -21,5 +21,6 @@
     <string name="decks_nav_menu_title">Decks</string>
     <string name="study_nav_menu_title">Study</string>
     <string name="statistics_nav_menu_title">Statistics</string>
+    <string name="about_nav_menu_title">About us</string>
 
 </resources>
