@@ -52,6 +52,8 @@
         <action
             android:id="@+id/action_aboutFragment_to_titleFragment"
             app:destination="@id/titleFragment"
-            app:exitAnim="@android:anim/fade_out" />
+            app:exitAnim="@android:anim/fade_out"
+            app:popUpTo="@id/titleFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>
