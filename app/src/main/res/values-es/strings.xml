@@ -23,6 +23,9 @@
     <string name="study_nav_menu_title">Estudiar</string>
     <string name="statistics_nav_menu_title">Estadisticas</string>
     <string name="about_nav_menu_title">Acerca de nosotros</string>
-
+    <string name="author_info">Author: Dongxiang Liu</string>
+    <string name="version_info">Version: 1.0.27</string>
+    <string name="app_description_info">La aplicación te permite aprender y memorizar de manera más eficiente. Crea tu propio mazos y tarjetas</string>
+    <string name="return_button_text">Volver</string>
 
 </resources>

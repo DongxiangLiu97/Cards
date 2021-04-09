@@ -15,7 +15,7 @@
             app:destination="@id/cardListFragment" />
     </fragment>
     <fragment
-        android:id="@+id/studyFragment2"
+        android:id="@+id/studyFragment"
         android:name="es.uam.eps.dadm.cards.StudyFragment"
         android:label="StudyFragment"
         tools:layout="@layout/fragment_study"/>
@@ -26,7 +26,7 @@
         tools:layout="@layout/fragment_card_list" >
         <action
             android:id="@+id/action_cardListFragment_to_studyFragment"
-            app:destination="@id/studyFragment2" />
+            app:destination="@id/studyFragment" />
         <action
             android:id="@+id/action_cardListFragment_to_cardEditFragment"
             app:destination="@id/cardEditFragment" />
@@ -44,5 +44,14 @@
         <argument
             android:name="cardId"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="es.uam.eps.dadm.cards.AboutFragment"
+        android:label="AboutFragment" >
+        <action
+            android:id="@+id/action_aboutFragment_to_titleFragment"
+            app:destination="@id/titleFragment"
+            app:exitAnim="@android:anim/fade_out" />
     </fragment>
 </navigation>

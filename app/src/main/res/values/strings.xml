@@ -22,5 +22,9 @@
     <string name="study_nav_menu_title">Study</string>
     <string name="statistics_nav_menu_title">Statistics</string>
     <string name="about_nav_menu_title">About us</string>
+    <string name="author_info">Author: Dongxiang Liu</string>
+    <string name="version_info">Version: 1.0.27</string>
+    <string name="app_description_info">The application allows you to learn and memorize more efficiently. Create your own decks and cards</string>
+    <string name="return_button_text">Go back</string>
 
 </resources>
