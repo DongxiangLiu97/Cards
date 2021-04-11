@@ -75,15 +75,25 @@ class StatisticsFragment : Fragment() {
             xAxisValues.add(deck.name+" rep")
             pos+=1f
             yValue.add(BarEntry(pos,repetitions.toFloat()))
-            xAxisValues.add(deck.name+" intMed")
-            pos+=1f
-            yValue.add(BarEntry(pos,(intervalTotal/(deck.cards.size).toLong()).toFloat()))
+            xAxisValues.add(deck.name + " intMed")
+            pos += 1f
+            if(deck.cards.size!=0) {
+
+                yValue.add(BarEntry(pos, (intervalTotal / (deck.cards.size).toLong()).toFloat()))
+
+            }else{
+                yValue.add(BarEntry(pos, 0f))
+            }
             xAxisValues.add(deck.name+" intMax")
             pos+=1f
             yValue.add(BarEntry(pos,intervalMax.toFloat()))
             xAxisValues.add(deck.name+" easMed")
             pos+=1f
+            if(deck.cards.size!=0) {
             yValue.add(BarEntry(pos,(easinessTotal/(deck.cards.size).toLong()).toFloat()))
+            }else{
+                yValue.add(BarEntry(pos, 0f))
+            }
             xAxisValues.add(deck.name+" easMax")
             pos+=1f
             yValue.add(BarEntry(pos,easinessMax.toFloat()))
