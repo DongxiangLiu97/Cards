@@ -27,5 +27,7 @@
     <string name="version_info">Version: 1.0.27</string>
     <string name="app_description_info">La aplicación te permite aprender y memorizar de manera más eficiente. Crea tu propio mazos y tarjetas</string>
     <string name="return_button_text">Volver</string>
+    <string name="numElement">Valor o número de elemento</string>
+
 
 </resources>

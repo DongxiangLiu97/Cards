@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import es.uam.eps.dadm.cards.databinding.FragmentCardEditBinding
-import es.uam.eps.dadm.cards.databinding.FragmentStudyBinding
 
 
 class CardEditFragment : Fragment() {
@@ -18,6 +17,7 @@ class CardEditFragment : Fragment() {
     lateinit var card: Card
     lateinit var question: String
     lateinit var answer: String
+    lateinit var deckId: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,7 +33,8 @@ class CardEditFragment : Fragment() {
 
         val args = CardEditFragmentArgs.fromBundle(arguments!!)
 
-        card = CardsApplication.getCard(args.cardId)
+        card = CardsApplication.getCard(args.cardId,args.deckId)
+        deckId=args.deckId
         binding.card = card
         question = card.question
         answer = card.answer
@@ -70,14 +71,20 @@ class CardEditFragment : Fragment() {
         // Añade escuchadores OnClickListener para los botones
         binding.acceptCardEditButton.setOnClickListener {
             it.findNavController()
-                .navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment())
+                .navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
 
         }
         binding.cancelCardEditButton.setOnClickListener {
             card.question= question
             card.answer=answer
             it.findNavController()
-                .navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment())
+                .navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
+        }
+        binding.cardDeleteButton.setOnClickListener {
+            val id = card.id
+            CardsApplication.deleteCard(id,deckId)
+            it.findNavController()
+                    .navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
         }
     }
 }

@@ -7,8 +7,17 @@ class CardsApplication: Application() {
 
 
     init {
-        cards.add(Card("To wake up", "Levantarse"))
-        cards.add(Card("To pick up", "Recoger"))
+
+        var deck=Deck("inglés")
+        deck.cards.add(Card("To wake up", "Levantarse"))
+        deck.cards.add(Card("To pick up", "Recoger"))
+        decks.add(deck)
+
+        deck=Deck("Frances")
+        deck.cards.add(Card("question1", "Answer1"))
+        deck.cards.add(Card("question2", "Answer2"))
+        deck.cards.add(Card("question3", "Answer3"))
+        decks.add(deck)
 
     }
 
@@ -18,26 +27,69 @@ class CardsApplication: Application() {
     }
 
     companion object {
-        fun numberOfCardsLeft(): Int {
 
-            return cards.size
-
-        }
-
-        fun getCard(cardId: String): Card {
+        fun getCard(cardId: String, deckId: String): Card {
             lateinit var card: Card
-
-            cards.forEach{
-                if (it.id== cardId)
-                    card=it
+            decks.forEach{ deck ->
+                if (deck.id== deckId) {
+                    deck.cards.forEach{
+                        if (it.id== cardId)
+                            card=it
+                    }
+                }
             }
             return card
         }
 
-        fun addCard(card: Card) {
-            cards.add(card)
+        fun addCard(card: Card, deckId: String) {
+            decks.forEach{
+                if (it.id== deckId)
+                    it.cards.add(card)
+            }
         }
 
-        var cards: MutableList<Card> = mutableListOf<Card>()
+        fun addDeck(deck: Deck) {
+            decks.add(deck)
+        }
+
+        fun getDeck(deckId: String): Deck {
+            lateinit var deck: Deck
+
+            decks.forEach{
+                if (it.id== deckId)
+                    deck=it
+            }
+            return deck
+
+        }
+
+        fun deleteDeck(deckId: String) {
+            decks.forEach{ deck ->
+                if (deck.id== deckId) {
+                    decks.remove(deck)}
+            }
+        }
+
+        fun getAllCards(): MutableList<Card> {
+            var cards: MutableList<Card> = mutableListOf()
+            decks.forEach{ deck ->
+                cards.addAll(deck.cards)
+            }
+            return cards
+        }
+
+        fun deleteCard(cardId: String, deckId: String) {
+            decks.forEach{ deck ->
+                if (deck.id== deckId) {
+                    deck.cards.forEach{
+                        if (it.id== cardId)
+                            deck.cards.remove(it)
+                    }
+                }
+            }
+        }
+
+
+        var decks: MutableList<Deck> = mutableListOf<Deck>()
     }
 }

@@ -31,14 +31,18 @@ class CardListFragment : Fragment() {
                 false
         )
         adapter = CardAdapter()
-        adapter.data = CardsApplication.cards
+        val args = CardListFragmentArgs.fromBundle(arguments!!)
+
+        val deck = CardsApplication.getDeck(args.deckId)
+        adapter.data = deck.cards
+        adapter.deckId=deck.id
         binding.cardRecyclerView.adapter = adapter
 
         binding.newCardFab.setOnClickListener {
             val card = Card("", "")
-            CardsApplication.addCard(card)
+            CardsApplication.addCard(card,deck.id)
             it.findNavController().navigate(CardListFragmentDirections
-                    .actionCardListFragmentToCardEditFragment(card.id))
+                    .actionCardListFragmentToCardEditFragment(card.id,deck.id))
         }
 
         return binding.root

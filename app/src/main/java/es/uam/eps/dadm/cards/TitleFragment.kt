@@ -24,7 +24,7 @@ class TitleFragment: Fragment() {
 
         binding.cardsTitleTextView.setOnClickListener { view ->
 
-                view.findNavController().navigate(R.id.action_titleFragment_to_cardListFragment)
+                view.findNavController().navigate(R.id.action_titleFragment_to_deckListFragment)
             }
 
         return binding.root

@@ -9,6 +9,7 @@ import es.uam.eps.dadm.cards.databinding.ListItemCardBinding
 
 class CardAdapter() : RecyclerView.Adapter<CardAdapter.CardHolder>() {
     lateinit var binding: ListItemCardBinding
+    lateinit var deckId: String
 
 
     var data =  listOf<Card>()
@@ -24,9 +25,10 @@ class CardAdapter() : RecyclerView.Adapter<CardAdapter.CardHolder>() {
         init {
             binding.listItemQuestion.setOnClickListener {
                 val id = card.id
+
                 it.findNavController()
                     .navigate(CardListFragmentDirections
-                        .actionCardListFragmentToCardEditFragment(id))
+                        .actionCardListFragmentToCardEditFragment(id,deckId))
             }
         }
     }

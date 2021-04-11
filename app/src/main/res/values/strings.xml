@@ -26,5 +26,6 @@
     <string name="version_info">Version: 1.0.27</string>
     <string name="app_description_info">The application allows you to learn and memorize more efficiently. Create your own decks and cards</string>
     <string name="return_button_text">Go back</string>
+    <string name="numElement">Item number or value</string>
 
 </resources>

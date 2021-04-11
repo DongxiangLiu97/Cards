@@ -7,12 +7,21 @@ import java.time.LocalDateTime
 
 class StudyViewModel : ViewModel() {
     var card: Card? = null
-    var cards: MutableList<Card> = mutableListOf<Card>()
+    var deck: Deck?=null
+
+    var cards: MutableList<Card> = mutableListOf()
+    var decks: MutableList<Deck> = mutableListOf()
     private val _cardsLeft = MutableLiveData<Int>()
     val cardsLeft: LiveData<Int>
         get() = _cardsLeft
+
+    private val _decksLeft = MutableLiveData<Int>()
+    val decksLeft: LiveData<Int>
+        get() = _decksLeft
     init {
-        cards = CardsApplication.cards
+
+        decks=CardsApplication.decks
+        cards = CardsApplication.getAllCards()
         card = random_card()
         _cardsLeft.value = cards.size
 
