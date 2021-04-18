@@ -9,7 +9,7 @@ import es.uam.eps.dadm.cards.databinding.ListItemCardBinding
 
 class CardAdapter() : RecyclerView.Adapter<CardAdapter.CardHolder>() {
     lateinit var binding: ListItemCardBinding
-    lateinit var deckId: String
+    var deckId: Long = 1
 
 
     var data =  listOf<Card>()

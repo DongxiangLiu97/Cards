@@ -23,13 +23,13 @@ class DeckAdapter() : RecyclerView.Adapter<DeckAdapter.DeckHolder>() {
 
         init {
             binding.listItemName.setOnClickListener {
-                val id = deck.id
+                val id = deck.deckId
                 it.findNavController()
                         .navigate(DeckListFragmentDirections
                                 .actionDeckListFragmentToCardListFragment(id))
             }
             binding.listItemEditButton.setOnClickListener {
-                val id = deck.id
+                val id = deck.deckId
                 it.findNavController()
                         .navigate(DeckListFragmentDirections
                                 .actionDeckListFragmentToDeckEditFragment(id))

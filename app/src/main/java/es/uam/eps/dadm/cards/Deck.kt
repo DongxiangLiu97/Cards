@@ -3,11 +3,14 @@ package es.uam.eps.dadm.cards
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
-class Deck(
-    var name: String,
-    var id: String=UUID.randomUUID().toString()
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "decks_table")
+data class Deck(
+    @PrimaryKey val deckId: Long,
+    var name: String
 ){
     val cards = mutableListOf<Card>()
 
@@ -19,11 +22,11 @@ class Deck(
         val pregunta= readLine().toString()
         print("  Teclea la respuesta:")
         val respuesta= readLine().toString()
-        if (tipo ==0)
-            cards += listOf(Card(pregunta, respuesta))
+        cards += if (tipo ==0)
+            listOf(Card(pregunta, respuesta,deckId = deckId))
         else{
 
-            cards += listOf(Cloze(pregunta, respuesta))
+            listOf(Cloze(pregunta, respuesta,deckId = deckId))
         }
         println("  Tarjeta añadida correctamente")
 

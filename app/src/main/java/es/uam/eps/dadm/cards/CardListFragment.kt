@@ -1,49 +1,61 @@
 package es.uam.eps.dadm.cards
 
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import es.uam.eps.dadm.cards.database.CardDatabase
 import es.uam.eps.dadm.cards.databinding.FragmentCardListBinding
-
-private val TAG: String = "CardListFragment"
+import java.util.concurrent.Executors
 
 class CardListFragment : Fragment() {
     private lateinit var binding: FragmentCardListBinding
     private lateinit var adapter: CardAdapter
+    private val executor = Executors.newSingleThreadExecutor()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private val cardListViewModel by lazy {
+        ViewModelProvider(this).get(CardListViewModel::class.java)
     }
 
+
+
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_card_list,
-                container,
-                false
+            inflater,
+            R.layout.fragment_card_list,
+            container,
+            false
         )
         adapter = CardAdapter()
-        val args = CardListFragmentArgs.fromBundle(arguments!!)
-
+        val args = CardListFragmentArgs.fromBundle(requireArguments())
         val deck = CardsApplication.getDeck(args.deckId)
         adapter.data = deck.cards
-        adapter.deckId=deck.id
+        adapter.deckId=deck.deckId
         binding.cardRecyclerView.adapter = adapter
 
         binding.newCardFab.setOnClickListener {
-            val card = Card("", "")
-            CardsApplication.addCard(card,deck.id)
-            it.findNavController().navigate(CardListFragmentDirections
-                    .actionCardListFragmentToCardEditFragment(card.id,deck.id))
+            val card = Card("", "",deckId=adapter.deckId)
+            executor.execute {
+                CardDatabase.getInstance(requireContext()).cardDao.addCard(card)
+            }
+            it.findNavController().navigate(CardListFragmentDirections.actionCardListFragmentToCardEditFragment(card.id, deck.deckId))
         }
+        cardListViewModel.cards.observe(
+            viewLifecycleOwner,
+            Observer {
+                adapter.data = it
+                adapter.notifyDataSetChanged()
+            })
 
         return binding.root
     }

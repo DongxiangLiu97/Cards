@@ -1,5 +1,6 @@
 package es.uam.eps.dadm.cards
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,16 +9,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import es.uam.eps.dadm.cards.database.CardDatabase
 import es.uam.eps.dadm.cards.databinding.FragmentCardEditBinding
-
+import java.util.concurrent.Executors
+import kotlin.properties.Delegates
 
 class CardEditFragment : Fragment() {
+    private val executor = Executors.newSingleThreadExecutor()
     lateinit var binding: FragmentCardEditBinding
     lateinit var card: Card
     lateinit var question: String
     lateinit var answer: String
-    lateinit var deckId: String
+    var deckId by Delegates.notNull<Long>()
+
+
+    private val viewModel by lazy {
+        ViewModelProvider(this).get(CardEditViewModel::class.java)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,13 +42,15 @@ class CardEditFragment : Fragment() {
             false
         )
 
-        val args = CardEditFragmentArgs.fromBundle(arguments!!)
-
-        card = CardsApplication.getCard(args.cardId,args.deckId)
+        val args = CardEditFragmentArgs.fromBundle(requireArguments())
         deckId=args.deckId
-        binding.card = card
-        question = card.question
-        answer = card.answer
+        viewModel.loadCardId(args.cardId)
+        viewModel.card.observe(viewLifecycleOwner) {
+            card = it
+            binding.card = card
+            question = card.question
+            answer = card.answer
+        }
 
         return binding.root
     }
@@ -67,24 +80,24 @@ class CardEditFragment : Fragment() {
 
         binding.questionEditText.addTextChangedListener(questionTextWatcher)
         binding.answerEditText.addTextChangedListener(answerTextWatcher)
-
-        // Añade escuchadores OnClickListener para los botones
         binding.acceptCardEditButton.setOnClickListener {
-            it.findNavController()
-                .navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
+            executor.execute {
+                val cardDatabase = CardDatabase.getInstance(requireContext())
+                cardDatabase.cardDao.update(card)
+            }
 
+            it.findNavController().navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
         }
         binding.cancelCardEditButton.setOnClickListener {
-            card.question= question
-            card.answer=answer
-            it.findNavController()
-                .navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
-        }
-        binding.cardDeleteButton.setOnClickListener {
-            val id = card.id
-            CardsApplication.deleteCard(id,deckId)
-            it.findNavController()
-                    .navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
+            card.question = question
+            card.answer = answer
+            if (card.question == "" || card.answer == "")
+                executor.execute {
+                    val cardDatabase = CardDatabase.getInstance(requireContext())
+                    cardDatabase.cardDao.deleteCard(card.id)
+                }
+
+            it.findNavController().navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
         }
     }
 }

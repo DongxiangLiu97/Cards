@@ -8,14 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import es.uam.eps.dadm.cards.database.CardDatabase
 import es.uam.eps.dadm.cards.databinding.FragmentDeckEditBinding
+import java.util.concurrent.Executors
 
 
 class DeckEditFragment : Fragment() {
     lateinit var binding: FragmentDeckEditBinding
+    private val executor = Executors.newSingleThreadExecutor()
     lateinit var deck: Deck
     lateinit var name: String
+
+    private val viewModel by lazy {
+        ViewModelProvider(this).get(DeckEditViewModel::class.java)
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -29,11 +37,15 @@ class DeckEditFragment : Fragment() {
                 false
         )
 
-        val args = DeckEditFragmentArgs.fromBundle(arguments!!)
+        val args = DeckEditFragmentArgs.fromBundle(requireArguments())
 
-        deck = CardsApplication.getDeck(args.deckId)
-        binding.deck = deck
-        name = deck.name
+        viewModel.loadDeckId(args.deckId)
+        viewModel.deck.observe(viewLifecycleOwner) {
+            deck = it
+            binding.deck = deck
+            name = deck.name
+        }
+
         return binding.root
     }
 
@@ -57,6 +69,10 @@ class DeckEditFragment : Fragment() {
         // Añade escuchadores OnClickListener para los botones
 
         binding.acceptDeckEditButton.setOnClickListener {
+            executor.execute {
+                val cardDatabase = CardDatabase.getInstance(requireContext())
+                cardDatabase.cardDao.update(deck)
+            }
             it.findNavController()
                     .navigate(DeckEditFragmentDirections.actionDeckEditFragmentToDeckListFragment())
 
@@ -67,8 +83,11 @@ class DeckEditFragment : Fragment() {
                     .navigate(DeckEditFragmentDirections.actionDeckEditFragmentToDeckListFragment())
         }
         binding.deckDeleteButton.setOnClickListener {
-            val id = deck.id
-            CardsApplication.deleteDeck(id)
+            val id = deck.deckId
+            executor.execute {
+                val cardDatabase = CardDatabase.getInstance(requireContext())
+                cardDatabase.cardDao.deleteDeck(id)
+            }
             it.findNavController()
                     .navigate(DeckEditFragmentDirections.actionDeckEditFragmentToDeckListFragment())
         }

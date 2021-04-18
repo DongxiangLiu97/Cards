@@ -60,7 +60,10 @@ class StudyFragment: Fragment() {
         binding.doubtButton.setOnClickListener(listener)
         binding.difficultButton.setOnClickListener(listener)
 
-
+        viewModel.dueCard.observe(viewLifecycleOwner) {
+            viewModel.card = it
+            binding.invalidateAll()
+        }
         return binding.root
     }
 

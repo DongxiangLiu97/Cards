@@ -1,44 +1,39 @@
 package es.uam.eps.dadm.cards
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.Transformations
+import es.uam.eps.dadm.cards.database.CardDatabase
 import java.time.LocalDateTime
+import java.util.concurrent.Executors
 
-class StudyViewModel : ViewModel() {
+class StudyViewModel(application: Application) : AndroidViewModel(application) {
+    private val executor = Executors.newSingleThreadExecutor()
+
+    private val context = getApplication<Application>().applicationContext
     var card: Card? = null
-    var deck: Deck?=null
+    var cards: LiveData<List<Card>> = CardDatabase.getInstance(context).cardDao.getCards()
+    var dueCard: LiveData<Card?> =
+        Transformations.map(cards, ::due)
+    var cardsLeft: LiveData<Int> =
+        Transformations.map(cards, ::left)
 
-    var cards: MutableList<Card> = mutableListOf()
-    var decks: MutableList<Deck> = mutableListOf()
-    private val _cardsLeft = MutableLiveData<Int>()
-    val cardsLeft: LiveData<Int>
-        get() = _cardsLeft
-
-    private val _decksLeft = MutableLiveData<Int>()
-    val decksLeft: LiveData<Int>
-        get() = _decksLeft
-    init {
-
-        decks=CardsApplication.decks
-        cards = CardsApplication.getAllCards()
-        card = random_card()
-        _cardsLeft.value = cards.size
-
+    private fun due(cards: List<Card>) = try {
+        cards.filter { card -> card.isDue(LocalDateTime.now()) }.random()
+    } catch (e: Exception) {
+        null
     }
+
+    private fun left(cards: List<Card>) =
+        cards.filter { card -> card.isDue(LocalDateTime.now()) }.size
 
     fun update(quality: Int) {
         card?.quality = quality
         card?.update(LocalDateTime.now())
-        card = random_card()
-        _cardsLeft.value = cardsLeft.value?.minus(1)
-    }
 
-    private fun random_card() = try {
-        cards.filter { card ->
-            card.isDue(LocalDateTime.now())
-        }.random()
-    } catch (e: NoSuchElementException) {
-        null
+        executor.execute {
+            CardDatabase.getInstance(context).cardDao.update(card!!)
+        }
     }
 }

@@ -1,95 +1,43 @@
 package es.uam.eps.dadm.cards
 
 import android.app.Application
-import timber.log.Timber
+import es.uam.eps.dadm.cards.database.CardDatabase
+import java.util.concurrent.Executors
 
 class CardsApplication: Application() {
-
+    private val executor = Executors.newSingleThreadExecutor()
 
     init {
-
-        var deck=Deck("inglés")
-        deck.cards.add(Card("To wake up", "Levantarse"))
-        deck.cards.add(Card("To pick up", "Recoger"))
-        decks.add(deck)
-
-        deck=Deck("Frances")
-        deck.cards.add(Card("question1", "Answer1"))
-        deck.cards.add(Card("question2", "Answer2"))
-        deck.cards.add(Card("question3", "Answer3"))
-        decks.add(deck)
-
+        decks.add(Deck(1, "Inglés"))
+        decks.add(Deck(2, "Francés"))
     }
 
     override fun onCreate() {
         super.onCreate()
-        Timber.plant(Timber.DebugTree())
+        val cardDatabase = CardDatabase.getInstance(context = this)
+        executor.execute {
+            cardDatabase.cardDao.addCard(Card("To wake up", "Despertarse", deckId = 1))
+            cardDatabase.cardDao.addCard(Card("To give in", "Dar el brazo a torcer", deckId = 1))
+            cardDatabase.cardDao.addCard(Card("Coche", "Voiture", deckId = 2))
+        }
     }
 
     companion object {
-
-        fun getCard(cardId: String, deckId: String): Card {
-            lateinit var card: Card
-            decks.forEach{ deck ->
-                if (deck.id== deckId) {
-                    deck.cards.forEach{
-                        if (it.id== cardId)
-                            card=it
-                    }
-                }
-            }
-            return card
-        }
-
-        fun addCard(card: Card, deckId: String) {
-            decks.forEach{
-                if (it.id== deckId)
-                    it.cards.add(card)
-            }
-        }
-
-        fun addDeck(deck: Deck) {
-            decks.add(deck)
-        }
-
-        fun getDeck(deckId: String): Deck {
-            lateinit var deck: Deck
-
-            decks.forEach{
-                if (it.id== deckId)
-                    deck=it
-            }
-            return deck
-
-        }
-
-        fun deleteDeck(deckId: String) {
-            decks.forEach{ deck ->
-                if (deck.id== deckId) {
-                    decks.remove(deck)}
-            }
-        }
-
-        fun getAllCards(): MutableList<Card> {
-            var cards: MutableList<Card> = mutableListOf()
-            decks.forEach{ deck ->
-                cards.addAll(deck.cards)
-            }
-            return cards
-        }
-
-        fun deleteCard(cardId: String, deckId: String) {
-            decks.forEach{ deck ->
-                if (deck.id== deckId) {
-                    deck.cards.forEach{
-                        if (it.id== cardId)
-                            deck.cards.remove(it)
-                    }
-                }
-            }
-        }
-
-
+        var cards: MutableList<Card> = mutableListOf<Card>()
         var decks: MutableList<Deck> = mutableListOf<Deck>()
+
+        fun getCard(id: String): Card {
+            return cards.filter { it.id == id }[0]
+        }
+        fun addCard(card: Card) {
+            cards.add(card)
+        }
+        fun deleteCard(id: String) {
+            cards.remove(getCard(id))
+        }
+
+        fun getDeck(deckId: Long): Deck {
+            return decks.filter { it.deckId == deckId }[0]
+        }
     }
 }

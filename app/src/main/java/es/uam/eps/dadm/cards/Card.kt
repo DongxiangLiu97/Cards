@@ -5,16 +5,20 @@ import java.lang.Double.max
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.math.roundToLong
+import androidx.room.Entity
+import androidx.room.ColumnInfo
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "cards_table")
 open class Card(
+        @ColumnInfo(name = "card_question")
         var question: String,
         var answer: String,
-
         var date: String = LocalDateTime.now().toString(),
+        @PrimaryKey
         var id: String = UUID.randomUUID().toString(),
-
-
-        ){
+        var deckId: Long
+){
     var quality=0
     var repetitions=0
     var interval=1L
@@ -65,11 +69,11 @@ open class Card(
     companion object {
         fun fromString(cad: String): Card {
             val trozos = cad.split(" | ")
-            val card = Card(trozos[1].trim(), trozos[2].trim(), trozos[3].trim(), trozos[4].trim())
-            card.easiness= trozos[5].trim().toDouble()
-            card.repetitions= trozos[6].trim().toInt()
-            card.interval= trozos[7].trim().toLong()
-            card.nextPracticeDate= trozos[8].trim()
+            val card = Card(trozos[1].trim(), trozos[2].trim(), trozos[3].trim(), trozos[4].trim(),trozos[5].trim().toLong())
+            card.easiness= trozos[6].trim().toDouble()
+            card.repetitions= trozos[7].trim().toInt()
+            card.interval= trozos[8].trim().toLong()
+            card.nextPracticeDate= trozos[9].trim()
             return card
         }
     }
