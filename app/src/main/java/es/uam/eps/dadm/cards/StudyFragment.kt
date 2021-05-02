@@ -34,7 +34,7 @@ class StudyFragment: Fragment() {
         // Si la propiedad card de viewModel es null
         // informa al usuario mediante un Toast de que
         // no quedan tarjetas
-        if (viewModel.card == null){
+        if (viewModel.cardsLeft.value  == 0){
             binding.relative.visibility= View.INVISIBLE
             Toast.makeText(activity,getString(R.string.no_cards), Toast.LENGTH_SHORT).show()
         }
@@ -51,14 +51,17 @@ class StudyFragment: Fragment() {
             container,
             false)
         binding.studyViewModel = viewModel
+
         binding.answerButton.setOnClickListener {
             viewModel.card?.answered = true
             binding.invalidateAll()
         }
+        binding.lifecycleOwner=this
         // Ajusta el escuchador listener a los botones de dificultad
         binding.easyButton.setOnClickListener(listener)
         binding.doubtButton.setOnClickListener(listener)
         binding.difficultButton.setOnClickListener(listener)
+
 
         viewModel.dueCard.observe(viewLifecycleOwner) {
             viewModel.card = it
@@ -66,16 +69,5 @@ class StudyFragment: Fragment() {
         }
         return binding.root
     }
-
-
-
-
-
-
-
-
-
-
-
 
 }

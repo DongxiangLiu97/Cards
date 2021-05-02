@@ -9,11 +9,15 @@
         android:paddingRight="8dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp">
-
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/chart"
+        <TextView
+            android:id="@+id/textBox"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceHeadline6"/>
 
     </RelativeLayout>
 

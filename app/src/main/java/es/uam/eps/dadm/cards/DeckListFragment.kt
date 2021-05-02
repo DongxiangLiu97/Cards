@@ -1,16 +1,18 @@
 package es.uam.eps.dadm.cards
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import es.uam.eps.dadm.cards.database.CardDatabase
 import es.uam.eps.dadm.cards.databinding.FragmentDeckListBinding
+import timber.log.Timber
 import java.util.concurrent.Executors
 
 
@@ -26,6 +28,7 @@ class DeckListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -39,8 +42,12 @@ class DeckListFragment : Fragment() {
                 container,
                 false
         )
+
         adapter = DeckAdapter()
-        adapter.data = CardsApplication.decks
+        val decks = deckListViewModel.decks.value
+        if (decks != null) {
+            adapter.data=decks
+        }
         binding.deckRecyclerView.adapter = adapter
 
         binding.newDeckFab.setOnClickListener {
@@ -59,5 +66,18 @@ class DeckListFragment : Fragment() {
             })
 
         return binding.root
+    }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_card_list, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.settings -> {
+                findNavController().navigate(DeckListFragmentDirections.actionDeckListFragmentToCardSettingsFragment())
+            }
+        }
+        return true
     }
 }

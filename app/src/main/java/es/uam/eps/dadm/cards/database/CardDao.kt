@@ -16,15 +16,20 @@ interface CardDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addCard(card: Card)
     @Update
-    fun update(card: Card)
+    fun updateCard(card: Card)
 
     @Query("DELETE FROM cards_table WHERE id = :id")
     fun deleteCard(id: String)
+
+    @Query("SELECT * FROM cards_table WHERE deckId = :DeckId")
+    fun getCardsFromDeck(DeckId: Long):LiveData<List<Card>>
+
+
     @Query("DELETE FROM decks_table WHERE deckId = :id")
     fun deleteDeck(id: Long)
 
     @Update
-    fun update(deck: Deck)
+    fun updateDeck(deck: Deck)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addDeck(deck: Deck)

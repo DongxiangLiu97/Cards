@@ -83,7 +83,7 @@ class CardEditFragment : Fragment() {
         binding.acceptCardEditButton.setOnClickListener {
             executor.execute {
                 val cardDatabase = CardDatabase.getInstance(requireContext())
-                cardDatabase.cardDao.update(card)
+                cardDatabase.cardDao.updateCard(card)
             }
 
             it.findNavController().navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
@@ -99,5 +99,14 @@ class CardEditFragment : Fragment() {
 
             it.findNavController().navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
         }
+        binding.cardDeleteButton.setOnClickListener {
+            var cardId=card.id
+            executor.execute {
+                val cardDatabase = CardDatabase.getInstance(requireContext())
+                cardDatabase.cardDao.deleteCard(cardId)
+            }
+            it.findNavController().navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
+        }
+
     }
 }

@@ -1,17 +1,18 @@
 package es.uam.eps.dadm.cards
 
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import es.uam.eps.dadm.cards.database.CardDatabase
 import es.uam.eps.dadm.cards.databinding.FragmentCardListBinding
+import timber.log.Timber
 import java.util.concurrent.Executors
 
 class CardListFragment : Fragment() {
@@ -24,7 +25,10 @@ class CardListFragment : Fragment() {
     }
 
 
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,9 +42,13 @@ class CardListFragment : Fragment() {
         )
         adapter = CardAdapter()
         val args = CardListFragmentArgs.fromBundle(requireArguments())
-        val deck = CardsApplication.getDeck(args.deckId)
-        adapter.data = deck.cards
-        adapter.deckId=deck.deckId
+
+        cardListViewModel.loadDeckId(args.deckId)
+        val cards= cardListViewModel.cardsFromDecks.value
+        if (cards != null) {
+            adapter.data = cards
+        }
+        adapter.deckId=args.deckId
         binding.cardRecyclerView.adapter = adapter
 
         binding.newCardFab.setOnClickListener {
@@ -48,9 +56,10 @@ class CardListFragment : Fragment() {
             executor.execute {
                 CardDatabase.getInstance(requireContext()).cardDao.addCard(card)
             }
-            it.findNavController().navigate(CardListFragmentDirections.actionCardListFragmentToCardEditFragment(card.id, deck.deckId))
+            it.findNavController().navigate(CardListFragmentDirections.actionCardListFragmentToCardEditFragment(card.id, args.deckId))
         }
-        cardListViewModel.cards.observe(
+
+        cardListViewModel.cardsFromDecks.observe(
             viewLifecycleOwner,
             Observer {
                 adapter.data = it
@@ -58,5 +67,19 @@ class CardListFragment : Fragment() {
             })
 
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_card_list, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.settings -> {
+                findNavController().navigate(CardListFragmentDirections.actionCardListFragmentToCardSettingsFragment())
+            }
+        }
+        return true
     }
 }

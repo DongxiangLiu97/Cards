@@ -42,6 +42,9 @@
         <argument
             android:name="deckId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_cardListFragment_to_cardSettingsFragment"
+            app:destination="@id/cardSettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/cardEditFragment"
@@ -82,6 +85,9 @@
             android:id="@+id/action_deckListFragment_to_deckEditFragment"
             app:destination="@id/deckEditFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_deckListFragment_to_cardSettingsFragment"
+            app:destination="@id/cardSettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/deckEditFragment"
@@ -107,4 +113,8 @@
             app:popUpTo="@id/titleFragment"
             app:popUpToInclusive="true" />
     </fragment>
+    <fragment
+        android:id="@+id/cardSettingsFragment"
+        android:name="es.uam.eps.dadm.cards.CardSettingsFragment"
+        android:label="CardSettingsFragment" />
 </navigation>

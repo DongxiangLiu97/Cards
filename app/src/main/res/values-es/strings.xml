@@ -28,6 +28,19 @@
     <string name="app_description_info">La aplicación te permite aprender y memorizar de manera más eficiente. Crea tu propio mazos y tarjetas</string>
     <string name="return_button_text">Volver</string>
     <string name="numElement">Valor o número de elemento</string>
+    <string name="settings">Ajustes</string>
 
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="decks_header">Mazos</string>
+
+    <!-- Maximum number of cards Preferences -->
+    <string name="max_number_cards">Número maximo de tarjetas</string>
+
+    <!-- Sync Preferences -->
+    <string name="board_title">Mostrar tablero </string>
+    <string name="board_summary_on">Tablero disponible</string>
+    <string name="board_summary_off">Tablero no disponible</string>
 
 </resources>

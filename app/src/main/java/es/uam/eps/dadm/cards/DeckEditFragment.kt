@@ -71,7 +71,7 @@ class DeckEditFragment : Fragment() {
         binding.acceptDeckEditButton.setOnClickListener {
             executor.execute {
                 val cardDatabase = CardDatabase.getInstance(requireContext())
-                cardDatabase.cardDao.update(deck)
+                cardDatabase.cardDao.updateDeck(deck)
             }
             it.findNavController()
                     .navigate(DeckEditFragmentDirections.actionDeckEditFragmentToDeckListFragment())

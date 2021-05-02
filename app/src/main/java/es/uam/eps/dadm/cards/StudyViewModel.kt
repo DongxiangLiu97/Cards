@@ -1,6 +1,7 @@
 package es.uam.eps.dadm.cards
 
 import android.app.Application
+import android.text.NoCopySpan
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
@@ -13,11 +14,12 @@ class StudyViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = getApplication<Application>().applicationContext
     var card: Card? = null
+
+
+
     var cards: LiveData<List<Card>> = CardDatabase.getInstance(context).cardDao.getCards()
-    var dueCard: LiveData<Card?> =
-        Transformations.map(cards, ::due)
-    var cardsLeft: LiveData<Int> =
-        Transformations.map(cards, ::left)
+    var dueCard: LiveData<Card?> =Transformations.map(cards, ::due)
+    var cardsLeft: LiveData<Int> =Transformations.map(cards, ::left)
 
     private fun due(cards: List<Card>) = try {
         cards.filter { card -> card.isDue(LocalDateTime.now()) }.random()
@@ -33,7 +35,7 @@ class StudyViewModel(application: Application) : AndroidViewModel(application) {
         card?.update(LocalDateTime.now())
 
         executor.execute {
-            CardDatabase.getInstance(context).cardDao.update(card!!)
+            CardDatabase.getInstance(context).cardDao.updateCard(card!!)
         }
     }
 }

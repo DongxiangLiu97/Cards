@@ -39,12 +39,12 @@ class StatisticsFragment : Fragment() {
             false
         )
 
-        statisticsViewModel.loadDeckId(2)
+        statisticsViewModel.loadDeckId(1L)
 
         statisticsViewModel.deckWithCards.observe(viewLifecycleOwner) {
             val deck = it[0].deck
             val cards = it[0].cards
-            Timber.i("El mazo " + deck.name + " tiene " + cards.size + " tarjetas")
+            binding.textBox.text= "El mazo " + deck.name + " tiene " + cards.size + " tarjetas"
         }
         return binding.root
     }
