@@ -39,7 +39,7 @@ class StatisticsFragment : Fragment() {
             false
         )
 
-        statisticsViewModel.loadDeckId(1L)
+        statisticsViewModel.loadDeckId("ingles")
 
         statisticsViewModel.deckWithCards.observe(viewLifecycleOwner) {
             val deck = it[0].deck

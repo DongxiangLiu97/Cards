@@ -11,13 +11,13 @@ class DeckEditViewModel(application: Application): AndroidViewModel(application)
 
     private val context = getApplication<Application>().applicationContext
 
-    private val deckId = MutableLiveData<Long>()
+    private val deckId = MutableLiveData<String>()
 
     val deck: LiveData<Deck> = Transformations.switchMap(deckId) {
         CardDatabase.getInstance(context).cardDao.getDeck(it)
     }
 
-    fun loadDeckId(id: Long) {
+    fun loadDeckId(id: String) {
         deckId.value = id
     }
 }

@@ -13,13 +13,13 @@ class StatisticsViewModel(application: Application) : AndroidViewModel(applicati
 
     var decks: LiveData<List<DeckWithCards>> = CardDatabase.getInstance(context).cardDao.getDecksWithCards()
 
-    private val deckSelected = MutableLiveData<Long>()
+    private val deckSelected = MutableLiveData<String>()
 
     val deckWithCards: LiveData<List<DeckWithCards>> = Transformations.switchMap(deckSelected) {
         CardDatabase.getInstance(context).cardDao.getDeckWithCards(it)
     }
 
-    fun loadDeckId(id: Long) {
+    fun loadDeckId(id: String) {
         deckSelected.value = id
     }
 

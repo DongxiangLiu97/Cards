@@ -9,7 +9,7 @@ import es.uam.eps.dadm.cards.databinding.ListItemCardBinding
 
 class CardAdapter() : RecyclerView.Adapter<CardAdapter.CardHolder>() {
     lateinit var binding: ListItemCardBinding
-    var deckId: Long = 1
+    lateinit var deckId: String
 
 
     var data =  listOf<Card>()
@@ -29,6 +29,18 @@ class CardAdapter() : RecyclerView.Adapter<CardAdapter.CardHolder>() {
                 it.findNavController()
                     .navigate(CardListFragmentDirections
                         .actionCardListFragmentToCardEditFragment(id,deckId))
+            }
+            binding.dataExpandMore.setOnClickListener {
+                binding.dataExpandMore.visibility=View.INVISIBLE
+                binding.dataExpandLess.visibility=View.VISIBLE
+                binding.listItemData1.visibility=View.VISIBLE
+                binding.listItemData2.visibility=View.VISIBLE
+            }
+            binding.dataExpandLess.setOnClickListener {
+                binding.dataExpandMore.visibility=View.VISIBLE
+                binding.dataExpandLess.visibility=View.INVISIBLE
+                binding.listItemData1.visibility=View.INVISIBLE
+                binding.listItemData2.visibility=View.INVISIBLE
             }
         }
     }

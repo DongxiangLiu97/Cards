@@ -34,7 +34,7 @@ class StudyFragment: Fragment() {
         // Si la propiedad card de viewModel es null
         // informa al usuario mediante un Toast de que
         // no quedan tarjetas
-        if (viewModel.cardsLeft.value  == 0){
+        if (viewModel.card  == null){
             binding.relative.visibility= View.INVISIBLE
             Toast.makeText(activity,getString(R.string.no_cards), Toast.LENGTH_SHORT).show()
         }
@@ -65,6 +65,10 @@ class StudyFragment: Fragment() {
 
         viewModel.dueCard.observe(viewLifecycleOwner) {
             viewModel.card = it
+            if (it  == null){
+                binding.relative.visibility= View.INVISIBLE
+                Toast.makeText(activity,getString(R.string.no_cards), Toast.LENGTH_SHORT).show()
+            }
             binding.invalidateAll()
         }
         return binding.root

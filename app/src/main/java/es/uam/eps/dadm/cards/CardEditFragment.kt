@@ -11,22 +11,26 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import com.google.firebase.database.FirebaseDatabase
 import es.uam.eps.dadm.cards.database.CardDatabase
 import es.uam.eps.dadm.cards.databinding.FragmentCardEditBinding
 import java.util.concurrent.Executors
 import kotlin.properties.Delegates
 
 class CardEditFragment : Fragment() {
-    private val executor = Executors.newSingleThreadExecutor()
+
     lateinit var binding: FragmentCardEditBinding
     lateinit var card: Card
     lateinit var question: String
     lateinit var answer: String
-    var deckId by Delegates.notNull<Long>()
+    lateinit var deckId :String
 
+    private var reference = FirebaseDatabase
+            .getInstance()
+            .getReference("tarjetas")
 
     private val viewModel by lazy {
-        ViewModelProvider(this).get(CardEditViewModel::class.java)
+        ViewModelProvider(this).get(CardEditFirebaseViewModel::class.java)
     }
 
 
@@ -81,30 +85,23 @@ class CardEditFragment : Fragment() {
         binding.questionEditText.addTextChangedListener(questionTextWatcher)
         binding.answerEditText.addTextChangedListener(answerTextWatcher)
         binding.acceptCardEditButton.setOnClickListener {
-            executor.execute {
-                val cardDatabase = CardDatabase.getInstance(requireContext())
-                cardDatabase.cardDao.updateCard(card)
-            }
+
+            reference.child(card.id).setValue(card)
 
             it.findNavController().navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
         }
         binding.cancelCardEditButton.setOnClickListener {
             card.question = question
             card.answer = answer
-            if (card.question == "" || card.answer == "")
-                executor.execute {
-                    val cardDatabase = CardDatabase.getInstance(requireContext())
-                    cardDatabase.cardDao.deleteCard(card.id)
+            if (card.question == "Pregunta" || card.answer == "Respuesta"){
+                reference.child(card.id).removeValue()
                 }
 
             it.findNavController().navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
         }
         binding.cardDeleteButton.setOnClickListener {
-            var cardId=card.id
-            executor.execute {
-                val cardDatabase = CardDatabase.getInstance(requireContext())
-                cardDatabase.cardDao.deleteCard(cardId)
-            }
+
+            reference.child(card.id).removeValue()
             it.findNavController().navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
         }
 

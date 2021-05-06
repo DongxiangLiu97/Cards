@@ -29,8 +29,10 @@
     <string name="return_button_text">Volver</string>
     <string name="numElement">Valor o número de elemento</string>
     <string name="settings">Ajustes</string>
-
     <string name="title_activity_settings">SettingsActivity</string>
+
+    <string name="repetition_interval"> Repetition: %d  Interval: %d</string>
+    <string name="quality_easines"> Quality: %d   Easines: %2$.2f</string>
 
     <!-- Preference Titles -->
     <string name="decks_header">Mazos</string>

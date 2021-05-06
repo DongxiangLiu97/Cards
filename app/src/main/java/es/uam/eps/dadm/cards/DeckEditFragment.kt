@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import com.google.firebase.database.FirebaseDatabase
 import es.uam.eps.dadm.cards.database.CardDatabase
 import es.uam.eps.dadm.cards.databinding.FragmentDeckEditBinding
 import java.util.concurrent.Executors
@@ -17,12 +18,16 @@ import java.util.concurrent.Executors
 
 class DeckEditFragment : Fragment() {
     lateinit var binding: FragmentDeckEditBinding
-    private val executor = Executors.newSingleThreadExecutor()
     lateinit var deck: Deck
     lateinit var name: String
 
+    private var reference = FirebaseDatabase
+            .getInstance()
+            .getReference("mazos")
+
+
     private val viewModel by lazy {
-        ViewModelProvider(this).get(DeckEditViewModel::class.java)
+        ViewModelProvider(this).get(DeckEditFirebaseViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -69,25 +74,23 @@ class DeckEditFragment : Fragment() {
         // Añade escuchadores OnClickListener para los botones
 
         binding.acceptDeckEditButton.setOnClickListener {
-            executor.execute {
-                val cardDatabase = CardDatabase.getInstance(requireContext())
-                cardDatabase.cardDao.updateDeck(deck)
-            }
+            reference.child(deck.deckId).setValue(deck)
             it.findNavController()
                     .navigate(DeckEditFragmentDirections.actionDeckEditFragmentToDeckListFragment())
 
         }
         binding.cancelDeckEditButton.setOnClickListener {
             deck.name=name
+            if (deck.name == "name" ){
+                reference.child(deck.deckId).removeValue()
+            }
             it.findNavController()
                     .navigate(DeckEditFragmentDirections.actionDeckEditFragmentToDeckListFragment())
         }
         binding.deckDeleteButton.setOnClickListener {
-            val id = deck.deckId
-            executor.execute {
-                val cardDatabase = CardDatabase.getInstance(requireContext())
-                cardDatabase.cardDao.deleteDeck(id)
-            }
+
+            reference.child(deck.deckId).removeValue()
+
             it.findNavController()
                     .navigate(DeckEditFragmentDirections.actionDeckEditFragmentToDeckListFragment())
         }

@@ -6,9 +6,15 @@ import java.time.format.DateTimeFormatter
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.*
 
 @Entity(tableName = "decks_table")
 data class Deck(
-    @PrimaryKey val deckId: Long,
+    @PrimaryKey val deckId: String = UUID.randomUUID().toString(),
     var name: String
-)
+){
+    constructor() : this(
+            UUID.randomUUID().toString(),
+            "name"
+    )
+}

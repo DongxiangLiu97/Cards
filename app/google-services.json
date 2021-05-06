@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "597250866230",
+    "project_id": "dongxiangliucards-92072",
+    "storage_bucket": "dongxiangliucards-92072.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597250866230:android:d98de42b66b0edc7112c97",
+        "android_client_info": {
+          "package_name": "es.uam.eps.dadm.cards"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "597250866230-i9s910qgmj93p9jkndbfs7mo9f0hcdpg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "es.uam.eps.dadm.cards",
+            "certificate_hash": "24e5def38ec57001b7196cefa97558c03a3910c8"
+          }
+        },
+        {
+          "client_id": "597250866230-krhv0cu5iivflp0p8ls218imb101h6p7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCP96J0YslH9jxL1jVrX2TVPgw89RHW3-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "597250866230-krhv0cu5iivflp0p8ls218imb101h6p7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,8 +3,8 @@ package es.uam.eps.dadm.cards
 class Cloze(
         question: String,
         answer: String,
-        deckId: Long
-        ): Card( question, answer, deckId=deckId) {
+
+        ): Card( question, answer) {
 
     override fun show(){
             var flagInsert= false
@@ -43,13 +43,14 @@ class Cloze(
     companion object {
         fun fromString(cad: String): Cloze {
             val trozos = cad.split(" | ")
-            val card = Cloze(trozos[1].trim(), trozos[2].trim(),trozos[5].trim().toLong())
+            val card = Cloze(trozos[1].trim(), trozos[2].trim())
             card.date= trozos[3].trim()
             card.id= trozos[4].trim()
-            card.easiness= trozos[5].trim().toDouble()
-            card.repetitions= trozos[6].trim().toInt()
-            card.interval= trozos[7].trim().toLong()
-            card.nextPracticeDate= trozos[8].trim()
+            card.deckId=trozos[5].trim()
+            card.easiness= trozos[6].trim().toDouble()
+            card.repetitions= trozos[7].trim().toInt()
+            card.interval= trozos[8].trim().toLong()
+            card.nextPracticeDate= trozos[9].trim()
             return card
         }
     }

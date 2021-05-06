@@ -9,6 +9,7 @@ import androidx.room.Entity
 import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
 
+
 @Entity(tableName = "cards_table")
 open class Card(
         @ColumnInfo(name = "card_question")
@@ -17,14 +18,22 @@ open class Card(
         var date: String = LocalDateTime.now().toString(),
         @PrimaryKey
         var id: String = UUID.randomUUID().toString(),
-        var deckId: Long
+
 ){
+    lateinit var deckId:String
     var quality=0
     var repetitions=0
     var interval=1L
     var nextPracticeDate= date
     var easiness= 2.5
     var answered=false
+
+    constructor() : this(
+            "Pregunta",
+            "Respuesta",
+            LocalDateTime.now().toString(),
+            UUID.randomUUID().toString()
+    )
 
     open fun show() {
         print("$question (INTRO para ver respuesta)")
@@ -69,7 +78,8 @@ open class Card(
     companion object {
         fun fromString(cad: String): Card {
             val trozos = cad.split(" | ")
-            val card = Card(trozos[1].trim(), trozos[2].trim(), trozos[3].trim(), trozos[4].trim(),trozos[5].trim().toLong())
+            val card = Card(trozos[1].trim(), trozos[2].trim(), trozos[3].trim(), trozos[4].trim())
+            card.deckId=trozos[5].trim()
             card.easiness= trozos[6].trim().toDouble()
             card.repetitions= trozos[7].trim().toInt()
             card.interval= trozos[8].trim().toLong()

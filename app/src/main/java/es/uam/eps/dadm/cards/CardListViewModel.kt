@@ -13,12 +13,12 @@ class CardListViewModel(application: Application) : AndroidViewModel(application
     private val context = getApplication<Application>().applicationContext
     val cards: LiveData<List<Card>> = CardDatabase.getInstance(context).cardDao.getCards()
 
-    private val deckSelected= MutableLiveData<Long>()
+    private val deckSelected= MutableLiveData<String>()
 
     val cardsFromDecks: LiveData<List<Card>> = Transformations.switchMap(deckSelected){
         CardDatabase.getInstance(context).cardDao.getCardsFromDeck(it)
     }
-    fun loadDeckId(deckId: Long){
+    fun loadDeckId(deckId: String){
         deckSelected.value=deckId
     }
 }

@@ -1,29 +1,30 @@
 package es.uam.eps.dadm.cards
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.database.FirebaseDatabase
 import es.uam.eps.dadm.cards.database.CardDatabase
 import es.uam.eps.dadm.cards.databinding.FragmentDeckListBinding
-import timber.log.Timber
 import java.util.concurrent.Executors
 
-
+private const val DATABASENAME = "mazos"
 class DeckListFragment : Fragment() {
     private lateinit var binding: FragmentDeckListBinding
     private lateinit var adapter: DeckAdapter
     private val executor = Executors.newSingleThreadExecutor()
 
+    private var reference = FirebaseDatabase
+            .getInstance()
+            .getReference(DATABASENAME)
 
     private val deckListViewModel by lazy {
-        ViewModelProvider(this).get(DeckListViewModel::class.java)
+        ViewModelProvider(this).get(DeckListFirebaseViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,26 +45,23 @@ class DeckListFragment : Fragment() {
         )
 
         adapter = DeckAdapter()
-        val decks = deckListViewModel.decks.value
-        if (decks != null) {
-            adapter.data=decks
-        }
+
+        deckListViewModel.decks.observe(
+                viewLifecycleOwner,
+                Observer {
+                    adapter.data = it
+                    adapter.notifyDataSetChanged()
+                })
+
         binding.deckRecyclerView.adapter = adapter
 
         binding.newDeckFab.setOnClickListener {
-            val deck = Deck((adapter.data.size+1).toLong(),"")
-            executor.execute {
-                CardDatabase.getInstance(requireContext()).cardDao.addDeck(deck)
-            }
+            val deck = Deck()
+            reference.child(deck.deckId).setValue(deck)
             it.findNavController().navigate(DeckListFragmentDirections
                     .actionDeckListFragmentToDeckEditFragment(deck.deckId))
         }
-       deckListViewModel.decks.observe(
-            viewLifecycleOwner,
-            Observer {
-                adapter.data = it
-                adapter.notifyDataSetChanged()
-            })
+
 
         return binding.root
     }
