@@ -29,6 +29,11 @@
     <string name="return_button_text">Volver</string>
     <string name="numElement">Valor o número de elemento</string>
     <string name="settings">Ajustes</string>
+
+    <string name="updateLocal">Descargar Data</string>
+    <string name="updateFirebase">Actualizar Data</string>
+    <string name="NoUser">No hay usuarios Log In</string>
+
     <string name="title_activity_settings">SettingsActivity</string>
 
     <string name="repetition_interval"> Repetition: %d  Interval: %d</string>
@@ -44,5 +49,15 @@
     <string name="board_title">Mostrar tablero </string>
     <string name="board_summary_on">Tablero disponible</string>
     <string name="board_summary_off">Tablero no disponible</string>
+
+
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="sign_in_text">Inicia sesion </string>
+    <string name="create_account_text">Crear cuenta</string>
+    <string name="invalid_text">Usuario o contraseña invalido</string>
+
+    <string name="email_hint">Escribe aquí el email </string>
+    <string name="password_hint">Escribe aquí la contraseña </string>
 
 </resources>

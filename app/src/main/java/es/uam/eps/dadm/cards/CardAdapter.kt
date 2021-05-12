@@ -33,14 +33,15 @@ class CardAdapter() : RecyclerView.Adapter<CardAdapter.CardHolder>() {
             binding.dataExpandMore.setOnClickListener {
                 binding.dataExpandMore.visibility=View.INVISIBLE
                 binding.dataExpandLess.visibility=View.VISIBLE
+
                 binding.listItemData1.visibility=View.VISIBLE
                 binding.listItemData2.visibility=View.VISIBLE
             }
             binding.dataExpandLess.setOnClickListener {
                 binding.dataExpandMore.visibility=View.VISIBLE
                 binding.dataExpandLess.visibility=View.INVISIBLE
-                binding.listItemData1.visibility=View.INVISIBLE
-                binding.listItemData2.visibility=View.INVISIBLE
+                binding.listItemData1.visibility=View.GONE
+                binding.listItemData2.visibility=View.GONE
             }
         }
     }
@@ -56,7 +57,15 @@ class CardAdapter() : RecyclerView.Adapter<CardAdapter.CardHolder>() {
 
     override fun getItemCount() = data.size
 
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
     override fun onBindViewHolder(holder: CardHolder, position: Int) {
         holder.bind(data[position])
+
     }
 }

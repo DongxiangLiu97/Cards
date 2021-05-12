@@ -88,7 +88,7 @@
             android:textColor="@color/colorPrimary"
             android:text="@{@string/quality_easines(card.quality,card.easiness)}"
             android:textSize="16sp"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:textAppearance="?attr/textAppearanceBody2"/>
         <TextView
             android:id="@+id/list_item_data2"
@@ -98,7 +98,7 @@
             android:textColor="@color/colorPrimary"
             android:text="@{@string/repetition_interval(card.repetitions,card.interval)}"
             android:textSize="16sp"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:textAppearance="?attr/textAppearanceBody2"/>
 
 

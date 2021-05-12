@@ -13,5 +13,15 @@
         android:icon="@android:drawable/ic_lock_power_off"
         android:title="Log out"
         app:showAsAction="never|withText" />
+    <item
+        android:id="@+id/updateLocalData"
+        android:icon="@android:drawable/ic_lock_power_off"
+        android:title="@string/updateLocal"
+        app:showAsAction="never|withText" />
+    <item
+        android:id="@+id/updateFirebaseData"
+        android:icon="@android:drawable/ic_lock_power_off"
+        android:title="@string/updateFirebase"
+        app:showAsAction="never|withText" />
 
 </menu>

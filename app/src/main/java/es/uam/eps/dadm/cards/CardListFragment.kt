@@ -5,28 +5,36 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.*
+import com.google.firebase.ktx.Firebase
 import es.uam.eps.dadm.cards.database.CardDatabase
 import es.uam.eps.dadm.cards.databinding.FragmentCardListBinding
 import java.util.concurrent.Executors
 
-private const val DATABASENAME = "tarjetas"
+
+private const val DATABASENAME = "Tarjetas"
 
 class CardListFragment : Fragment() {
+
+
+
     private lateinit var binding: FragmentCardListBinding
     private lateinit var adapter: CardAdapter
-
+    private val executor = Executors.newSingleThreadExecutor()
+    lateinit var deckId :String
+    lateinit var reference: DatabaseReference
 
     private val cardListViewModel by lazy {
-        ViewModelProvider(this).get(CardListFirebaseViewModel::class.java)
+        ViewModelProvider(this).get(CardListViewModel::class.java)
     }
-    private var reference = FirebaseDatabase
-            .getInstance()
-            .getReference(DATABASENAME)
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +54,15 @@ class CardListFragment : Fragment() {
         )
         adapter = CardAdapter()
         val args = CardListFragmentArgs.fromBundle(requireArguments())
+        deckId=args.deckId
+
+        reference = FirebaseDatabase
+                .getInstance()
+                .getReference("Tarjetas").child(deckId).child("cards")
         adapter.deckId=args.deckId
-        cardListViewModel.cards.observe(
+        cardListViewModel.loadDeckId(args.deckId)
+
+        cardListViewModel.cardsFromDecks.observe(
                 viewLifecycleOwner,
                 Observer {
                     adapter.data = it
@@ -60,7 +75,9 @@ class CardListFragment : Fragment() {
         binding.newCardFab.setOnClickListener {
             val card = Card()
             card.deckId=adapter.deckId
-            reference.child(card.id).setValue(card)
+            executor.execute {
+                CardDatabase.getInstance(requireContext()).cardDao.addCard(card)
+            }
             it.findNavController().navigate(
                     CardListFragmentDirections
                             .actionCardListFragmentToCardEditFragment(card.id,adapter.deckId)
@@ -83,7 +100,73 @@ class CardListFragment : Fragment() {
             R.id.settings -> {
                 findNavController().navigate(CardListFragmentDirections.actionCardListFragmentToCardSettingsFragment())
             }
+            R.id.updateLocalData->{
+                CardDatabase.getInstance(requireContext()).cardDao.deleteAllDecks()
+                CardDatabase.getInstance(requireContext()).cardDao.deleteAllCards()
+                getDecksFromFirebase()
+                getCardsFirebase()
+            }
+            R.id.updateFirebaseData->{
+
+            }
+            R.id.log_out->{
+
+                // [START auth_sign_out]
+                Firebase.auth.signOut()
+                // [END auth_sign_out]
+            }
+
         }
         return true
+    }
+    private fun getDecksFromFirebase(){
+        var decks = MutableLiveData<List<Deck>>()
+
+        var reference = FirebaseDatabase
+            .getInstance()
+            .getReference(DATABASENAME).child("mazos")
+        reference.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var listOfDecks: MutableList<Deck> = mutableListOf<Deck>()
+                for (deck in snapshot.children) {
+                    var newDeck = deck.getValue(Deck::class.java)
+                    if (newDeck != null)
+                        listOfDecks.add(newDeck)
+                }
+                decks.value = listOfDecks
+            }
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+        decks.value?.forEach {
+            CardDatabase.getInstance(requireContext()).cardDao.addDeck(it)
+        }
+    }
+    private fun getCardsFirebase(){
+        var cards = MutableLiveData<List<Card>>()
+
+        var reference = FirebaseDatabase
+            .getInstance()
+            .getReference(DATABASENAME).child("cards")
+
+        reference.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var listOfCards: MutableList<Card> = mutableListOf<Card>()
+                for (card in snapshot.children) {
+                    var newCard = card.getValue(Card::class.java)
+                    if (newCard != null)
+                        listOfCards.add(newCard)
+                }
+                cards.value = listOfCards
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+        cards.value?.forEach {
+            CardDatabase.getInstance(requireContext()).cardDao.addCard(it)
+        }
     }
 }

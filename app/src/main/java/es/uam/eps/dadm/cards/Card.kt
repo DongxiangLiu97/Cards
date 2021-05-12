@@ -29,8 +29,8 @@ open class Card(
     var answered=false
 
     constructor() : this(
-            "Pregunta",
-            "Respuesta",
+            "",
+            "",
             LocalDateTime.now().toString(),
             UUID.randomUUID().toString()
     )

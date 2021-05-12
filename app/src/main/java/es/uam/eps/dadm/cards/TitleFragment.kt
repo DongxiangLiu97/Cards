@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import es.uam.eps.dadm.cards.databinding.FragmentTitleBinding
 class TitleFragment: Fragment() {
     override fun onCreateView(
@@ -21,11 +23,14 @@ class TitleFragment: Fragment() {
             R.layout.fragment_title,
             container,
             false)
-
+        val user = Firebase.auth.currentUser
         binding.cardsTitleTextView.setOnClickListener { view ->
-
+            if(user!= null){
                 view.findNavController().navigate(R.id.action_titleFragment_to_deckListFragment)
+            }else{
+                view.findNavController().navigate(R.id.action_titleFragment_to_loginFragment)
             }
+        }
 
         return binding.root
     }

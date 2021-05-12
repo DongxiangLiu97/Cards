@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import es.uam.eps.dadm.cards.database.CardDatabase
 import es.uam.eps.dadm.cards.databinding.FragmentCardEditBinding
@@ -18,19 +19,17 @@ import java.util.concurrent.Executors
 import kotlin.properties.Delegates
 
 class CardEditFragment : Fragment() {
-
+    private val executor = Executors.newSingleThreadExecutor()
     lateinit var binding: FragmentCardEditBinding
     lateinit var card: Card
     lateinit var question: String
     lateinit var answer: String
     lateinit var deckId :String
 
-    private var reference = FirebaseDatabase
-            .getInstance()
-            .getReference("tarjetas")
+    lateinit var reference: DatabaseReference
 
     private val viewModel by lazy {
-        ViewModelProvider(this).get(CardEditFirebaseViewModel::class.java)
+        ViewModelProvider(this).get(CardEditViewModel::class.java)
     }
 
 
@@ -48,6 +47,11 @@ class CardEditFragment : Fragment() {
 
         val args = CardEditFragmentArgs.fromBundle(requireArguments())
         deckId=args.deckId
+        reference = FirebaseDatabase
+                .getInstance()
+                .getReference("Tarjetas").child(deckId).child("cards")
+
+
         viewModel.loadCardId(args.cardId)
         viewModel.card.observe(viewLifecycleOwner) {
             card = it
@@ -86,22 +90,31 @@ class CardEditFragment : Fragment() {
         binding.answerEditText.addTextChangedListener(answerTextWatcher)
         binding.acceptCardEditButton.setOnClickListener {
 
-            reference.child(card.id).setValue(card)
+            executor.execute {
+                val cardDatabase = CardDatabase.getInstance(requireContext())
+                cardDatabase.cardDao.updateCard(card)
+            }
 
             it.findNavController().navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
         }
         binding.cancelCardEditButton.setOnClickListener {
             card.question = question
             card.answer = answer
-            if (card.question == "Pregunta" || card.answer == "Respuesta"){
-                reference.child(card.id).removeValue()
+            if (card.question == "" || card.answer == ""){
+                executor.execute {
+                    val cardDatabase = CardDatabase.getInstance(requireContext())
+                    cardDatabase.cardDao.deleteCard(card.id)
                 }
+            }
 
             it.findNavController().navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
         }
         binding.cardDeleteButton.setOnClickListener {
 
-            reference.child(card.id).removeValue()
+            executor.execute {
+                val cardDatabase = CardDatabase.getInstance(requireContext())
+                cardDatabase.cardDao.deleteCard(card.id)
+            }
             it.findNavController().navigate(CardEditFragmentDirections.actionCardEditFragmentToCardListFragment(deckId))
         }
 
