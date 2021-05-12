@@ -2,15 +2,13 @@ package es.uam.eps.dadm.cards
 
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -18,19 +16,19 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import es.uam.eps.dadm.cards.database.CardDatabase
+import es.uam.eps.dadm.cards.database.DeckWithCards
 import es.uam.eps.dadm.cards.databinding.FragmentDeckListBinding
 import java.util.concurrent.Executors
 
 
-
-private const val DATABASENAME = "Tarjetas"
+private const val DATABASENAME = "CardApplication"
 class DeckListFragment : Fragment() {
 
     private lateinit var binding: FragmentDeckListBinding
     private lateinit var adapter: DeckAdapter
     private val executor = Executors.newSingleThreadExecutor()
-
-
+    private lateinit var user: FirebaseUser
+    private lateinit var decksCards: List<DeckWithCards>
 
     private val deckListViewModel by lazy {
         ViewModelProvider(this).get(DeckListViewModel::class.java)
@@ -45,17 +43,24 @@ class DeckListFragment : Fragment() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
                 inflater,
                 R.layout.fragment_deck_list,
                 container,
                 false
         )
-        val user = Firebase.auth.currentUser
+        user = Firebase.auth.currentUser
 
         adapter = DeckAdapter()
-        deckListViewModel.getUserProfile()
+        deckListViewModel.loadUserId(user.uid)
+        deckListViewModel.decksCards.observe(
+            viewLifecycleOwner,
+            Observer {
+                decksCards=it
+            }
+        )
+
         deckListViewModel.decks.observe(
                 viewLifecycleOwner,
                 Observer {
@@ -64,10 +69,7 @@ class DeckListFragment : Fragment() {
                 })
 
         binding.deckRecyclerView.adapter = adapter
-        if (user==null){
-            Toast.makeText(context,getString(R.string.NoUser),Toast.LENGTH_SHORT).show()
-            binding.newDeckFab.visibility=View.INVISIBLE
-        }
+
         binding.newDeckFab.setOnClickListener {
             val deck = Deck()
             deck.user=user.uid
@@ -75,7 +77,8 @@ class DeckListFragment : Fragment() {
                 CardDatabase.getInstance(requireContext()).cardDao.addDeck(deck)
             }
             it.findNavController().navigate(DeckListFragmentDirections
-                    .actionDeckListFragmentToDeckEditFragment(deck.deckId))
+                .actionDeckListFragmentToDeckEditFragment(deck.deckId))
+
         }
 
 
@@ -89,74 +92,94 @@ class DeckListFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.settings -> {
-                findNavController().navigate(CardListFragmentDirections.actionCardListFragmentToCardSettingsFragment())
+                findNavController().navigate(DeckListFragmentDirections.actionDeckListFragmentToCardSettingsFragment())
             }
             R.id.updateLocalData->{
-                CardDatabase.getInstance(requireContext()).cardDao.deleteAllDecks()
-                CardDatabase.getInstance(requireContext()).cardDao.deleteAllCards()
+
+                decksCards.forEach {
+                    executor.execute {
+                        CardDatabase.getInstance(requireContext()).cardDao.deleteAllCardsFromDeck(it.deck.deckId)
+                        CardDatabase.getInstance(requireContext()).cardDao.deleteDeck(it.deck.deckId)
+                    }
+                }
                 getDecksFromFirebase()
                 getCardsFirebase()
             }
             R.id.updateFirebaseData->{
+                val reference = FirebaseDatabase
+                    .getInstance()
+                    .getReference(DATABASENAME)
+
+                reference.child(user.uid).child("decks").setValue(null)
+                reference.child(user.uid).child("cards").setValue(null)
+
+
+                decksCards.forEach { it ->
+                    reference.child(user.uid).child("decks").child(it.deck.deckId).setValue(it.deck)
+
+                    val cards = it.cards
+                    cards.forEach{
+                        reference.child(user.uid).child("cards").child(it.deckId).setValue(it)
+                    }
+
+                }
 
             }
             R.id.log_out->{
 
-                    // [START auth_sign_out]
-                    Firebase.auth.signOut()
-                    // [END auth_sign_out]
+                // [START auth_sign_out]
+                Firebase.auth.signOut()
+                // [END auth_sign_out]
+                findNavController().navigate(DeckListFragmentDirections.actionDeckListFragmentToLoginFragment())
+
             }
 
         }
         return true
     }
     private fun getDecksFromFirebase(){
-        var decks = MutableLiveData<List<Deck>>()
+        val reference = FirebaseDatabase
+            .getInstance()
+            .getReference(DATABASENAME).child(user.uid).child("decks")
 
-        var reference = FirebaseDatabase
-                .getInstance()
-                .getReference(DATABASENAME).child("decks")
         reference.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                var listOfDecks: MutableList<Deck> = mutableListOf<Deck>()
                 for (deck in snapshot.children) {
-                    var newDeck = deck.getValue(Deck::class.java)
-                    if (newDeck != null)
-                        listOfDecks.add(newDeck)
+                    val newDeck = deck.getValue(Deck::class.java)
+                    if (newDeck != null){
+                        executor.execute {
+                            CardDatabase.getInstance(requireContext()).cardDao.addDeck(newDeck)
+                        }
+                    }
+
                 }
-                decks.value = listOfDecks
             }
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
         })
-        decks.value?.forEach {
-            CardDatabase.getInstance(requireContext()).cardDao.addDeck(it)
-        }
+
     }
     private fun getCardsFirebase(){
-        var cards = MutableLiveData<List<Card>>()
+        val reference = FirebaseDatabase
+            .getInstance()
+            .getReference(DATABASENAME).child(user.uid).child("cards")
 
-        var reference = FirebaseDatabase
-                .getInstance()
-                .getReference(DATABASENAME).child("mazos")
         reference.addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                var listOfCards: MutableList<Card> = mutableListOf<Card>()
                 for (card in snapshot.children) {
-                    var newCard = card.getValue(Card::class.java)
-                    if (newCard != null)
-                        listOfCards.add(newCard)
+                    val newCard = card.getValue(Card::class.java)
+                    if (newCard != null) {
+                        executor.execute{
+                            CardDatabase.getInstance(requireContext()).cardDao.addCard(newCard)
+                        }
+                    }
                 }
-                cards.value = listOfCards
-            }
 
+            }
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
         })
-        cards.value?.forEach {
-            CardDatabase.getInstance(requireContext()).cardDao.addCard(it)
-        }
     }
 }

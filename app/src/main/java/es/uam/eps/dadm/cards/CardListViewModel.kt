@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import es.uam.eps.dadm.cards.database.CardDatabase
+import es.uam.eps.dadm.cards.database.DeckWithCards
 
 class CardListViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -20,5 +21,13 @@ class CardListViewModel(application: Application) : AndroidViewModel(application
     }
     fun loadDeckId(deckId: String){
         deckSelected.value=deckId
+    }
+    private val userId= MutableLiveData<String?>()
+
+    fun loadUserId(uid:String?){
+        userId.value=uid
+    }
+    val decksCards: LiveData<List<DeckWithCards>> = Transformations.switchMap(userId){
+        it?.let { it1 ->CardDatabase.getInstance(context).cardDao.getDecksWithCardsFromUser(it) }
     }
 }

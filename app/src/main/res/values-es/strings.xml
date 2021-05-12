@@ -53,11 +53,20 @@
 
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Contraseña</string>
-    <string name="sign_in_text">Inicia sesion </string>
-    <string name="create_account_text">Crear cuenta</string>
+    <string name="sign_in">Inicia sesion</string>
+    <string name="create_account">Crear cuenta</string>
+    <string name="sign_out">Cerrar sesion</string>
+    <string name="reload">Recargar</string>
+    <string name="verify_email">Verificar</string>
     <string name="invalid_text">Usuario o contraseña invalido</string>
 
-    <string name="email_hint">Escribe aquí el email </string>
-    <string name="password_hint">Escribe aquí la contraseña </string>
+
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Contraseña</string>
+
+
+    <string name="desc_firebase_lockup">Logo y nombre de Firebase</string>
+    <string name="emailpassword_title_text">Email y COntraseña</string>
+    <string name="signed_out">Cerró sesión</string>
 
 </resources>

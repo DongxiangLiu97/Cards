@@ -7,20 +7,26 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import es.uam.eps.dadm.cards.database.CardDatabase
 import es.uam.eps.dadm.cards.database.DeckWithCards
+import java.time.LocalDateTime
+import java.util.concurrent.Executors
 
 class StatisticsViewModel(application: Application) : AndroidViewModel(application) {
+
+
     private val context = getApplication<Application>().applicationContext
+    var card: Card? = null
 
-    var decks: LiveData<List<DeckWithCards>> = CardDatabase.getInstance(context).cardDao.getDecksWithCards()
+    private val userId= MutableLiveData<String?>()
 
-    private val deckSelected = MutableLiveData<String>()
-
-    val deckWithCards: LiveData<List<DeckWithCards>> = Transformations.switchMap(deckSelected) {
-        CardDatabase.getInstance(context).cardDao.getDeckWithCards(it)
+    fun loadUserId(uid:String?){
+        userId.value=uid
+    }
+    val decksCards: LiveData<List<DeckWithCards>> = Transformations.switchMap(userId){
+        it?.let { CardDatabase.getInstance(context).cardDao.getDecksWithCardsFromUser(it) }
     }
 
-    fun loadDeckId(id: String) {
-        deckSelected.value = id
-    }
+
+
+
 
 }

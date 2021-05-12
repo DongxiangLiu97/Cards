@@ -4,8 +4,10 @@ import android.app.Application
 import android.text.NoCopySpan
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import es.uam.eps.dadm.cards.database.CardDatabase
+import es.uam.eps.dadm.cards.database.DeckWithCards
 import java.time.LocalDateTime
 import java.util.concurrent.Executors
 
@@ -15,11 +17,29 @@ class StudyViewModel(application: Application) : AndroidViewModel(application) {
     private val context = getApplication<Application>().applicationContext
     var card: Card? = null
 
+    private val userId= MutableLiveData<String?>()
+
+    fun loadUserId(uid:String?){
+        userId.value=uid
+    }
+    private val decksCards: LiveData<List<DeckWithCards>> = Transformations.switchMap(userId){
+        it?.let { CardDatabase.getInstance(context).cardDao.getDecksWithCardsFromUser(it) }
+    }
 
 
-    var cards: LiveData<List<Card>> = CardDatabase.getInstance(context).cardDao.getCards()
+    var cards: LiveData<List<Card>> = Transformations.map(decksCards, ::getCards)
+
+    private fun getCards(decksWithCardsList: List<DeckWithCards>): List<Card> {
+        val cardsList: MutableList<Card> = mutableListOf()
+        decksWithCardsList.forEach {
+            cardsList += it.cards
+        }
+        return cardsList
+    }
     var dueCard: LiveData<Card?> =Transformations.map(cards, ::due)
     var cardsLeft: LiveData<Int> =Transformations.map(cards, ::left)
+
+
 
     private fun due(cards: List<Card>) = try {
         cards.filter { card -> card.isDue(LocalDateTime.now()) }.random()

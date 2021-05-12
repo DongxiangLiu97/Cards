@@ -37,16 +37,22 @@ interface CardDao {
     @Query("SELECT * FROM decks_table WHERE deckId = :deckId")
     fun getDeck(deckId: String): LiveData<Deck?>
 
-    @Query("SELECT * FROM decks_table WHERE user =  :user" )
-    fun getDecks(user: String): LiveData<List<Deck>>
+    @Query("SELECT * FROM decks_table WHERE user =  :userId" )
+    fun getDecks(userId: String): LiveData<List<Deck>>
+
 
     @Transaction
     @Query("SELECT * FROM decks_table")
     fun getDecksWithCards(): LiveData<List<DeckWithCards>>
 
     @Transaction
+    @Query("SELECT * FROM decks_table WHERE deckId = :deckId")
+    fun getDeckWithCards(deckId: String): LiveData<List<DeckWithCards>>
+
+
+    @Transaction
     @Query("SELECT * FROM decks_table WHERE user = :user")
-    fun getDeckWithCards(user: String): LiveData<List<DeckWithCards>>
+    fun getDecksWithCardsFromUser(user: String): LiveData<List<DeckWithCards>>
 
     @Query("DELETE FROM decks_table")
     fun deleteAllDecks()

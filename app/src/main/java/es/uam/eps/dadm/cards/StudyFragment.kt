@@ -9,6 +9,9 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import es.uam.eps.dadm.cards.databinding.ActivityStudyBinding
 import es.uam.eps.dadm.cards.databinding.FragmentStudyBinding
 import es.uam.eps.dadm.cards.databinding.FragmentTitleBinding
@@ -16,6 +19,8 @@ import java.lang.Exception
 
 class StudyFragment: Fragment() {
     lateinit var binding: FragmentStudyBinding
+    private lateinit var user: FirebaseUser
+
     private val viewModel: StudyViewModel by lazy {
         ViewModelProvider(this).get(StudyViewModel::class.java)
     }
@@ -50,6 +55,9 @@ class StudyFragment: Fragment() {
             R.layout.fragment_study,
             container,
             false)
+        user = Firebase.auth.currentUser
+        viewModel.loadUserId(user.uid)
+
         binding.studyViewModel = viewModel
 
         binding.answerButton.setOnClickListener {

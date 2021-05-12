@@ -17,24 +17,20 @@ class DeckListViewModel(application: Application) : AndroidViewModel(application
 
     private val context = getApplication<Application>().applicationContext
 
-    private val userId= MutableLiveData<String>()
+    private val userId= MutableLiveData<String?>()
 
-    private fun loadUserId(uid:String){
+    fun loadUserId(uid:String?){
         userId.value=uid
     }
 
-    fun getUserProfile() {
-        // [START get_user_profile]
-        val user = Firebase.auth.currentUser
-        user?.let {
-            val uid = user.uid
-            loadUserId(uid)
-        }
-        // [END get_user_profile]
-    }
+
 
     val decks: LiveData<List<Deck>> = Transformations.switchMap(userId){
-        CardDatabase.getInstance(context).cardDao.getDecks(it)
+        it?.let { it1 -> CardDatabase.getInstance(context).cardDao.getDecks(it1) }
+    }
+
+    val decksCards: LiveData<List<DeckWithCards>> = Transformations.switchMap(userId){
+        it?.let { it1 ->CardDatabase.getInstance(context).cardDao.getDecksWithCardsFromUser(it) }
     }
 
 
