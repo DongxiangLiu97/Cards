@@ -1,5 +1,6 @@
 package es.uam.eps.dadm.cards
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -30,6 +31,8 @@ class DeckEditFragment : Fragment() {
     private val viewModel by lazy {
         ViewModelProvider(this).get(DeckEditViewModel::class.java)
     }
+
+
 
     override fun onCreateView(
             inflater: LayoutInflater,

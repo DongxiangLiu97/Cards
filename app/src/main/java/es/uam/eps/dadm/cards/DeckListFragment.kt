@@ -1,5 +1,6 @@
 package es.uam.eps.dadm.cards
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
@@ -38,6 +39,7 @@ class DeckListFragment : Fragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
+
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -153,11 +155,13 @@ class DeckListFragment : Fragment() {
                     }
 
                 }
+                reference.removeEventListener(this)
             }
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
         })
+
 
     }
     private fun getCardsFirebase(){
@@ -175,7 +179,7 @@ class DeckListFragment : Fragment() {
                         }
                     }
                 }
-
+                reference.removeEventListener(this)
             }
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")

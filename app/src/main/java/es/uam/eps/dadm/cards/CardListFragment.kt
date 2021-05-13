@@ -168,6 +168,7 @@ class CardListFragment : Fragment() {
                     }
 
                 }
+                reference.removeEventListener(this)
             }
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
@@ -190,7 +191,7 @@ class CardListFragment : Fragment() {
                         }
                     }
                 }
-
+                reference.removeEventListener(this)
             }
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
