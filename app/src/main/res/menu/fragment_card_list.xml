@@ -3,6 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/updateLocalData"
+        android:icon="@drawable/ic_baseline_cloud_download_24"
+        android:title="@string/updateLocal"
+        app:showAsAction="always|withText" />
+    <item
+        android:id="@+id/updateFirebaseData"
+        android:icon="@drawable/ic_baseline_cloud_upload_24"
+        android:title="@string/updateFirebase"
+        app:showAsAction="always|withText" />
+    <item
         android:id="@+id/settings"
         android:icon="@android:drawable/ic_menu_manage"
         android:title="@string/settings"
@@ -11,17 +21,8 @@
     <item
         android:id="@+id/log_out"
         android:icon="@android:drawable/ic_lock_power_off"
-        android:title="Log out"
+        android:title="@string/sign_out"
         app:showAsAction="never|withText" />
-    <item
-        android:id="@+id/updateLocalData"
-        android:icon="@android:drawable/ic_lock_power_off"
-        android:title="@string/updateLocal"
-        app:showAsAction="never|withText" />
-    <item
-        android:id="@+id/updateFirebaseData"
-        android:icon="@android:drawable/ic_lock_power_off"
-        android:title="@string/updateFirebase"
-        app:showAsAction="never|withText" />
+
 
 </menu>

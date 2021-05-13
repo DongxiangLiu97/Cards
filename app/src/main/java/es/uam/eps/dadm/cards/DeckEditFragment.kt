@@ -35,7 +35,7 @@ class DeckEditFragment : Fragment() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
                 inflater,
                 R.layout.fragment_deck_edit,
@@ -101,7 +101,6 @@ class DeckEditFragment : Fragment() {
                 val cardDatabase = CardDatabase.getInstance(requireContext())
                 cardDatabase.cardDao.deleteAllCardsFromDeck(deck.deckId)
                 cardDatabase.cardDao.deleteDeck(deck.deckId)
-
             }
             it.findNavController()
                     .navigate(DeckEditFragmentDirections.actionDeckEditFragmentToDeckListFragment())
